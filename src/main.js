@@ -250,6 +250,8 @@ async function init() {
     await video.play();
 
     statusDiv.innerText = "Загрузка AI...";
+    
+    // Исправленный стабильный путь для WASM модуля MediaPipe
     const filesetResolver = await FilesetResolver.forVisionTasks(
       "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
     );
@@ -266,8 +268,8 @@ async function init() {
     statusDiv.innerText = "🟢 AI Активен";
     predictWebcam();
   } catch (err) {
-    statusDiv.innerText = "❌ Ошибка камеры";
-    alertText.innerText = "⚠️ Не удалось запустить камеру или AI-модель.";
+    statusDiv.innerText = "❌ Ошибка загрузки AI";
+    alertText.innerText = "⚠️ Не удалось запустить камеру или загрузить модель MediaPipe.";
     console.error("Ошибка инициализации:", err);
   }
 }
@@ -304,9 +306,7 @@ function predictWebcam() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       if (results.faceLandmarks && results.faceLandmarks.length > 0) {
-        if (statusDiv.innerText !== "🟢 AI Активен") {
-          statusDiv.innerText = "🟢 AI Активен";
-        }
+        statusDiv.innerText = "🟢 AI Активен";
 
         const lm = results.faceLandmarks[0];
         lastLandmarks = lm;
