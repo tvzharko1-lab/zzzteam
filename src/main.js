@@ -263,7 +263,7 @@ async function init() {
     statusDiv.innerText = "🟢 AI Активен";
     predictWebcam();
   } catch (err) {
-    statusDiv.innerText = "❌ Ошибка";
+    statusDiv.innerText = "❌ Ошибка камеры";
     alertText.innerText = "⚠️ Не удалось запустить камеру или AI-модель.";
     console.error("Ошибка инициализации:", err);
   }
@@ -301,6 +301,11 @@ function predictWebcam() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       if (results.faceLandmarks && results.faceLandmarks.length > 0) {
+        // Если лицо найдено, убеждаемся, что статус показывает активность AI
+        if (statusDiv.innerText !== "🟢 AI Активен") {
+          statusDiv.innerText = "🟢 AI Активен";
+        }
+
         const lm = results.faceLandmarks[0];
         lastLandmarks = lm;
 
