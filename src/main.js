@@ -1,4 +1,4 @@
-import { FaceLandmarker, FilesetResolver } from "@mediapipe/tasks-vision";
+import { FaceLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/+esm";
 
 const video = document.getElementById("webcam");
 const canvas = document.getElementById("output_canvas");
@@ -18,12 +18,6 @@ const blinkCountEl = document.getElementById("blink-count");
 const calibrateBtn = document.getElementById("calibrate-btn");
 const pipBtn = document.getElementById("pip-btn");
 const tabBtns = document.querySelectorAll(".tab-btn");
-
-// ИИ элементы
-const aiResponseBox = document.getElementById("ai-response-box");
-const aiAnalyzeBtn = document.getElementById("ai-analyze-btn");
-const aiInput = document.getElementById("ai-input");
-const aiSendBtn = document.getElementById("ai-send-btn");
 
 // Элементы модального окна "i"
 const infoBtns = document.querySelectorAll(".info-btn");
@@ -55,20 +49,20 @@ let pipWindow = null;
 // Описания для кнопок "i"
 const infoTexts = {
   slouch: {
-    title: "⚠️ Почему опасна сутулость?",
-    text: "Длительная работа со сгорбленной спиной создает избыточную нагрузку на шейные позвонки и поясницу, снижает объем легких и ухудшает кровоснабжение мозга. Это приводит к быстрой утомляемости, головным болям и болям в спине."
+    title: "⚠️ Сутулость",
+    text: "Фиксирует отклонение спины от нормы, заданной при калибровке. Длительная сутулость создает избыточную нагрузку на шейные позвонки и поясницу, снижает объем легких и ухудшает кровоснабжение мозга."
   },
   yawn: {
-    title: "🥱 Сигналы усталости (Зевки)",
-    text: "Частые зевки и глубокие вдохи — признак гипоксии (нехватки кислорода) или переутомления нервной системы. Если вы часто зеваете, рекомендуется сделать 5-минутный перерыв, проветрить комнату или сделать лёгкую разминку."
+    title: "🥱 Зевки",
+    text: "Определяет признаки усталости и гипоксии (нехватки кислорода) по открытию рта. Частые зевки сигнализируют о необходимости сделать перерыв и проветрить комнату."
   },
   blink: {
     title: "👁️ Частота моргания",
-    text: "В норме человек моргает 15-20 раз в минуту. За экраном ПК частота моргания падает до 5-7 раз, из-за чего сохнет роговица глаза («синдром сухого глаза»). Постарайтесь моргать чаще!"
+    text: "Считает количество морганий в минуту для контроля напряжения глаз. За экраном ПК частота падает, что приводит к «синдрому сухого глаза». В норме нужно моргать 15-20 раз в минуту."
   },
   calib: {
-    title: "🔄 Сброс позы и калибровка",
-    text: "Показывает, сколько раз вы меняли базовое положение. Если вы изменили высоту стула или наклонили экран, сделайте наклон головы или нажмите кнопку «Зафиксировать позу»."
+    title: "🔄 Калибровки",
+    text: "Показывает количество сбросов и обновления базовой позы. Используйте кнопку «Зафиксировать позу», если вы изменили положение тела или высоту стула."
   }
 };
 
@@ -119,12 +113,12 @@ function getEAR(eyeLandmarks) {
   const v1 = getDistance(eyeLandmarks[1], eyeLandmarks[5]);
   const v2 = getDistance(eyeLandmarks[2], eyeLandmarks[4]);
   const h = getDistance(eyeLandmarks[0], eyeLandmarks[3]);
-  return (v1 + v2) / (2.0 * h); // Исправлено умножение
+  return (v1 + v2) / (2.0 * h);
 }
 
 function updateCountersDisplay() {
   const now = Date.now();
-  let timeWindowMs = 10 * 60 * 1000; // Исправлено умножение
+  let timeWindowMs = 10 * 60 * 1000;
 
   if (activeTimeframe === "30m") timeWindowMs = 30 * 60 * 1000;
   if (activeTimeframe === "1h")  timeWindowMs = 60 * 60 * 1000;
@@ -167,7 +161,7 @@ function drawFaceSkeleton(landmarks, color = "#38bdf8") {
     const p = landmarks[idx];
     if (p) {
       ctx.beginPath();
-      ctx.arc(p.x * w, p.y * h, 2.2, 0, 2 * Math.PI); // Исправлено умножение
+      ctx.arc(p.x * w, p.y * h, 2.2, 0, 2 * Math.PI);
       ctx.fill();
     }
   });
@@ -254,7 +248,7 @@ async function init() {
 
     statusDiv.innerText = "Загрузка AI...";
     const filesetResolver = await FilesetResolver.forVisionTasks(
-      "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/wasm"
+      "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
     );
 
     faceLandmarker = await FaceLandmarker.createFromOptions(filesetResolver, {
@@ -520,61 +514,6 @@ pipBtn.addEventListener("click", async () => {
   } else {
     alert("Ваш браузер не поддерживает Document Picture-in-Picture API.");
   }
-});
-
-// --- ИИ АССИСТЕНТ И ЛОГИКА АНАЛИЗА ---
-function generateAIAnalysis() {
-  const slouchCount = countSlouchEl.innerText;
-  const yawnCount = countYawnEl.innerText;
-  const blinkRate = blinkCountEl.innerText;
-
-  let advice = `📊 **Анализ состояния:**\n`;
-
-  if (parseInt(slouchCount) > 3) {
-    advice += `• Вы сгорбились **${slouchCount} раз(а)** за период. Сделайте круговые движения плечами назад.\n`;
-  } else {
-    advice += `• Осанка в отличной норме! Нарушений минимум (${slouchCount}).\n`;
-  }
-
-  if (parseInt(yawnCount) > 1) {
-    advice += `• Зафиксировано **${yawnCount} зевков**. Вы утомлены, выпейте воды или проветрите комнату.\n`;
-  }
-
-  if (parseInt(blinkRate) < 10) {
-    advice += `• Низкая частота моргания (**${blinkRate}/мин**). Закройте глаза на 10 секунд!`;
-  } else {
-    advice += `• Частота моргания хорошая (**${blinkRate}/мин**). Глаза не пересыхают.`;
-  }
-
-  aiResponseBox.innerHTML = advice.replace(/\n/g, "<br>");
-}
-
-aiAnalyzeBtn.addEventListener("click", generateAIAnalysis);
-
-// Завершенная логика чата с ИИ
-aiSendBtn.addEventListener("click", () => {
-  const query = aiInput.value.trim();
-  if (!query) return;
-
-  // Визуализация загрузки
-  aiResponseBox.innerHTML = `🧠 *ИИ размышляет...*`;
-  aiInput.value = ""; // Очищаем поле ввода
-
-  // Простая симуляция ответов на основе ключевых слов
-  setTimeout(() => {
-    let reply = "Чтобы поддерживать осанку, держите монитор на уровне глаз. Следите, чтобы спина опиралась на спинку кресла.";
-    const lower = query.toLowerCase();
-
-    if (lower.includes("разминк") || lower.includes("упражнен")) {
-      reply = "Быстрая разминка: 1. Потянитесь руками вверх. 2. Сделайте 5 круговых движений плечами назад. 3. Поверните шею влево и вправо по 3 раза.";
-    } else if (lower.includes("глаз") || lower.includes("морган") || lower.includes("сухост")) {
-      reply = "Используйте правило 20-20-20: каждые 20 минут смотрите на расстояние 20 футов (6 метров) в течение 20 секунд. Это снимет спазм аккомодации!";
-    } else if (lower.includes("устал") || lower.includes("спать") || lower.includes("зев")) {
-      reply = "Кажется, накопилась усталость. Рекомендую встать, пройтись пару минут, выпить стакан воды и открыть окно для свежего воздуха.";
-    }
-
-    aiResponseBox.innerHTML = `🤖 **Ответ:** ${reply}`;
-  }, 800); // Небольшая задержка для эффекта «размышления»
 });
 
 // Запускаем приложение
