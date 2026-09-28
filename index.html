@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Posture & Health Guard AI</title>
+  <link rel="stylesheet" href="./src/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="app-container">
+    <!-- Шапка -->
+    <header class="app-header">
+      <div class="logo">
+        <div class="status-dot green" id="header-dot"></div>
+        <h1>Posture Guard <span class="badge-ai">AI Edition</span></h1>
+      </div>
+      <div class="header-actions">
+        <button id="pip-btn" class="btn btn-secondary">📺 PiP Режим</button>
+        <button id="calibrate-btn" class="btn btn-primary">🎯 Зафиксировать позу</button>
+      </div>
+    </header>
+
+    <!-- Основная сетка -->
+    <main class="dashboard-grid">
+      <!-- Левая колонка: Видеопоток -->
+      <section class="card video-card" id="main-video-card">
+        <div class="video-container">
+          <video id="webcam" autoplay playsinline muted></video>
+          <canvas id="output_canvas"></canvas>
+          
+          <div class="video-overlay-top">
+            <span class="status-badge" id="status">Инициализация...</span>
+            <span class="gesture-badge" id="gesture-badge">🟢 Поза ровная</span>
+          </div>
+        </div>
+
+        <div class="alert-box card" id="alert-box">
+          <span id="alert-text">✅ Система готова к работе. Выпрямите спину и нажмите "Зафиксировать позу".</span>
+        </div>
+      </section>
+
+      <!-- Правая колонка: Статистика и ИИ -->
+      <aside class="sidebar">
+        <!-- Фильтр времени -->
+        <div class="card timeframe-card">
+          <span class="card-title">Период статистики:</span>
+          <div class="time-tabs">
+            <button class="tab-btn active" data-time="10m">10 мин</button>
+            <button class="tab-btn" data-time="30m">30 мин</button>
+            <button class="tab-btn" data-time="1h">1 час</button>
+          </div>
+        </div>
+
+        <!-- Карточки показателей с кнопками "i" -->
+        <div class="stats-grid">
+          <!-- Сутулость -->
+          <div class="card stat-card">
+            <div class="stat-header">
+              <span class="stat-label">⚠️ Сутулость</span>
+              <button class="info-btn" data-info="slouch" title="Почему это важно?">i</button>
+            </div>
+            <div class="stat-value" id="count-slouch">0</div>
+            <div class="stat-footer">нарушений</div>
+          </div>
+
+          <!-- Зевки -->
+          <div class="card stat-card">
+            <div class="stat-header">
+              <span class="stat-label">🥱 Зевки</span>
+              <button class="info-btn" data-info="yawn" title="Почему это важно?">i</button>
+            </div>
+            <div class="stat-value" id="count-yawn">0</div>
+            <div class="stat-footer">сигналов усталости</div>
+          </div>
+
+          <!-- Моргание -->
+          <div class="card stat-card">
+            <div class="stat-header">
+              <span class="stat-label">👁️ Моргания</span>
+              <button class="info-btn" data-info="blink" title="Почему это важно?">i</button>
+            </div>
+            <div class="stat-value" id="blink-count">0</div>
+            <div class="stat-footer">раз в минуту</div>
+          </div>
+
+          <!-- Калибровки -->
+          <div class="card stat-card">
+            <div class="stat-header">
+              <span class="stat-label">🔄 Калибровки</span>
+              <button class="info-btn" data-info="calib" title="Информация">i</button>
+            </div>
+            <div class="stat-value" id="count-calib">0</div>
+            <div class="stat-footer">сбросов позы</div>
+          </div>
+        </div>
+
+        <!-- Шкала качества осанки -->
+        <div class="card posture-card">
+          <div class="posture-header">
+            <span>Качество осанки:</span>
+            <span class="status-text good" id="posture-status">ОК</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="bar-posture" style="width: 100%;"></div>
+          </div>
+        </div>
+
+        <!-- ИИ Ассистент на главном экране -->
+        <div class="card ai-card">
+          <div class="ai-header">
+            <span class="ai-title">🤖 ИИ Ассистент Здоровья</span>
+            <button id="ai-analyze-btn" class="btn-sm btn-ai">Сделать анализ</button>
+          </div>
+          <div class="ai-body" id="ai-response-box">
+            Привет! Я ваш ИИ-консультант. Нажмите «Сделать анализ» или спросите меня о разминке, усталости или осанке.
+          </div>
+          <div class="ai-input-group">
+            <input type="text" id="ai-input" placeholder="Спросить ИИ..." />
+            <button id="ai-send-btn" class="btn-sm btn-primary">➔</button>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- Модальное окно с информацией "i" -->
+  <div class="modal-backdrop hidden" id="info-modal">
+    <div class="modal-content card">
+      <div class="modal-header">
+        <h3 id="modal-title">Информация</h3>
+        <button class="modal-close" id="modal-close">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <!-- Текст вставляется динамически -->
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
