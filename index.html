@@ -42,7 +42,7 @@
         </div>
       </section>
 
-      <!-- Правая колонка: Статистика -->
+      <!-- Правая колонка: Статистика и ИИ -->
       <aside class="sidebar">
         <!-- Фильтр времени -->
         <div class="card timeframe-card">
@@ -108,16 +108,18 @@
           </div>
         </div>
 
-        <!-- Блок внизу справа: Советы по эргономике -->
+        <!-- ИИ Ассистент на главном экране -->
         <div class="card ai-card">
           <div class="ai-header">
-            <span class="ai-title">💡 Советы по эргономике</span>
+            <span class="ai-title">🤖 ИИ Ассистент Здоровья</span>
+            <button id="ai-analyze-btn" class="btn-sm btn-ai">Сделать анализ</button>
           </div>
-          <div class="ai-body" style="font-size: 0.82rem; line-height: 1.5; color: #cbd5e1; background: #0f172a; padding: 12px; border-radius: 8px;">
-            • Держите монитор на уровне глаз.<br>
-            • Стопы полностью стоят на полу.<br>
-            • Делайте микроразминку каждые 30 минут.<br>
-            • Следите за частым морганием за экраном.
+          <div class="ai-body" id="ai-response-box">
+            Привет! Я ваш ИИ-консультант. Нажмите «Сделать анализ» или спросите меня о разминке, усталости или осанке.
+          </div>
+          <div class="ai-input-group">
+            <input type="text" id="ai-input" placeholder="Спросить ИИ..." />
+            <button id="ai-send-btn" class="btn-sm btn-primary">➔</button>
           </div>
         </div>
       </aside>
