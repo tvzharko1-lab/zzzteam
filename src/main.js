@@ -143,12 +143,15 @@ tabBtns.forEach((btn) => {
   });
 });
 
-// Безопасная HUD-отрисовка скелета лица
+// Безопасная HUD-отрисовка скелета лица (с учетом зеркалирования видео)
 function drawFaceSkeleton(landmarks, color = "#38bdf8") {
   const w = canvas.width;
   const h = canvas.height;
 
   ctx.save();
+  ctx.translate(w, 0);
+  ctx.scale(-1, 1);
+
   ctx.shadowColor = color;
   ctx.shadowBlur = 8;
   ctx.strokeStyle = color;
@@ -301,7 +304,6 @@ function predictWebcam() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       if (results.faceLandmarks && results.faceLandmarks.length > 0) {
-        // Если лицо найдено, убеждаемся, что статус показывает активность AI
         if (statusDiv.innerText !== "🟢 AI Активен") {
           statusDiv.innerText = "🟢 AI Активен";
         }
